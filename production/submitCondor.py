@@ -9,7 +9,7 @@ def submitCondorJob(proc, executable, options, infile, label, outputToTransfer=N
     f = open(subfile,"w")
     f.write("Universe = vanilla\n")
     if hostname.count('ucsd'):
-      f.write("Grid_Resource = condor cmssubmit-r1.t2.ucsd.edu glidein-collector.t2.ucsd.edu\n")
+#      f.write("Grid_Resource = condor cmssubmit-r1.t2.ucsd.edu glidein-collector.t2.ucsd.edu\n")
       f.write("x509userproxy={0}\n".format(proxy))
       f.write("+DESIRED_Sites=\"T2_US_UCSD\"\n")
 #    f.write("request_cpus=8\n")
