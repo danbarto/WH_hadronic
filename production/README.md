@@ -6,6 +6,11 @@ Both miniAOD and nanoAOD files are produced, and are stored under
 ```
 /hadoop/cms/store/user/YOUR_USER/WH_hadronic
 ```
+As an example, see
+```
+/hadoop/cms/store/user/dspitzba/WH_hadronic/
+```
+
 
 In order to start, get your proxy and export it
 ```
