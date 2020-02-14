@@ -170,9 +170,44 @@ leg.Draw()
 ### Bonus: Find the Z boson in actual CMS data!
 
 
-[Small subset of DiMuon data from 2018](https://cernbox.cern.ch/index.php/s/kkMfHjA6W0apiAQ)
+[Small subset of DoubleMuon data from 2018](https://cernbox.cern.ch/index.php/s/kkMfHjA6W0apiAQ)
  - What is a promising decay channel?
  - Which objects would you use?
  - Which variable can you use?
 
 
+As the the name of the data set suggests, looking for the Z->mu+mu- decay is the best option.
+In order to select events with exactly two muons, we can use the following variable already contained in the provided root file:
+```
+nMuon==2
+```
+We also know that two muons from a Z boson decay have opposite electric charge.
+In order to enforce that we can use the `Muon_pdgId` variable.
+The [pdgId](http://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf) is a standard numbering scheme for particles, and the sign determines whether the particle is the "particle" or the "anti-particle" and therefore its electric charge.
+Therefore, by requiring
+```
+Muon_pdgId[0]*Muon_pdgId[1]<0
+```
+we make sure that the two muons we previously selected have opposite electric charge.
+
+Additionally, we apply some quality criteria: a minimum transverse momentum, a certain range within the detector, an ID requirement, and an isolation requirement. We will learn what all those mean a bit later.
+The final event selection can look like this:
+```
+eventSelection = "Sum$(Muon_pt>25&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_miniPFRelIso_all<0.1)==2 && nMuon==2 && Muon_pdgId[0]*Muon_pdgId[1]<0"
+```
+
+As discussed earlier, ROOT understands formulas and we don't always need to loop over events with an event loop written by ourselves. Instead, we let ROOT do all the work.
+For the invariant mass of the two muons that we select we can use the following formula:
+```
+invariantMass  = "sqrt(2*Muon_pt[0]*Muon_pt[1]*(cosh(Muon_eta[0]-Muon_eta[1])-cos(Muon_phi[0]-Muon_phi[1])))"
+```
+
+We can then create a histogram with appropriate `lowerLimit` and `upperLimit`. Tip: check out the value of the Z boson mass on wikipedia or the [PDG](http://pdg.lbl.gov) to find a good starting point.
+(The PDG is also a very valuable resource for the future)
+```
+mass = ROOT.TH1F("mass", "", 100,lowerLimit,upperLimit)
+```
+and draw the invariant mass:
+```
+DoubleMuon.Draw("%s>>mass"%invariantMass, eventSelection)
+```
